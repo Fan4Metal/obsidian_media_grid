@@ -1,0 +1,72 @@
+# Deploys the Media Gallery plugin into the dev vault.
+# Usage:  ./deploy.ps1                 deploy once to the bundled dev_vault
+#         ./deploy.ps1 -Watch          deploy, then re-deploy on every change
+#         ./deploy.ps1 -Vault "C:\Path\To\OtherVault"
+#
+# Note: galleries are now handled by the plugin under ./plugin. The old CSS
+# snippets (media-*.css) are superseded — disable them in Obsidian
+# (Settings -> Appearance -> CSS snippets). This script no longer deploys them.
+
+param(
+    [string]$Vault = (Join-Path $PSScriptRoot 'dev_vault'),
+    [switch]$Watch
+)
+
+$ErrorActionPreference = 'Stop'
+
+if (-not (Test-Path (Join-Path $Vault '.obsidian'))) {
+    throw "Not an Obsidian vault (no .obsidian folder): $Vault"
+}
+
+$pluginSrc = Join-Path $PSScriptRoot 'plugin'
+$pluginId  = 'media-gallery'
+$pluginDst = Join-Path $Vault ".obsidian\plugins\$pluginId"
+
+if (-not (Test-Path $pluginSrc)) {
+    throw "Plugin source not found: $pluginSrc"
+}
+
+function Invoke-Deploy {
+    New-Item -ItemType Directory -Force -Path $pluginDst | Out-Null
+    foreach ($f in @('manifest.json', 'main.js', 'styles.css')) {
+        $src = Join-Path $pluginSrc $f
+        if (Test-Path $src) {
+            Copy-Item -Path $src -Destination (Join-Path $pluginDst $f) -Force
+        }
+    }
+    Write-Host ("[{0:HH:mm:ss}] plugin -> {1}" -f (Get-Date), $pluginDst) -ForegroundColor Green
+
+    # Ensure the plugin is enabled in community-plugins.json
+    $cpFile = Join-Path $Vault '.obsidian\community-plugins.json'
+    $list = if (Test-Path $cpFile) { @(Get-Content $cpFile -Raw | ConvertFrom-Json) } else { @() }
+    if ($list -notcontains $pluginId) {
+        $list += $pluginId
+        ($list | ConvertTo-Json) | Set-Content -Path $cpFile -Encoding UTF8
+        Write-Host "  enabled '$pluginId' in community-plugins.json" -ForegroundColor Yellow
+    }
+}
+
+Invoke-Deploy
+
+if (-not $Watch) {
+    Write-Host "Reload Obsidian to pick up plugin changes (Ctrl+P -> 'Reload app without saving')." -ForegroundColor DarkGray
+    return
+}
+
+Write-Host "Watching $pluginSrc for changes. Press Ctrl+C to stop." -ForegroundColor Cyan
+
+$watcher = [System.IO.FileSystemWatcher]::new($pluginSrc)
+$watcher.NotifyFilter = [System.IO.NotifyFilters]::LastWrite
+$watcher.EnableRaisingEvents = $true
+
+try {
+    while ($true) {
+        $change = $watcher.WaitForChanged([System.IO.WatcherChangeTypes]::Changed, 1000)
+        if ($change.TimedOut) { continue }
+        Start-Sleep -Milliseconds 150   # let the editor finish writing
+        try { Invoke-Deploy } catch { Write-Host "deploy failed: $_" -ForegroundColor Red }
+    }
+}
+finally {
+    $watcher.Dispose()
+}

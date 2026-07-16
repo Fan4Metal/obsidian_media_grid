@@ -1,0 +1,72 @@
+/* Media Gallery plugin styles. CSS custom properties (--mg-*) are set from
+   the plugin settings at runtime; the fallbacks below keep it working even
+   before the plugin sets them. */
+
+/* ---- Strip the callout chrome so only the media shows ------------------- */
+.markdown-preview-view .callout[data-callout^="gallery"] {
+  margin-block: 1em;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+.markdown-preview-view .callout[data-callout^="gallery"] > .callout-title {
+  display: none;
+}
+.markdown-preview-view .callout[data-callout^="gallery"] > .callout-content {
+  padding: 0;
+}
+
+/* ---- Widen the gallery beyond the readable text column ------------------ */
+.markdown-preview-view.is-readable-line-width .callout[data-callout^="gallery"] {
+  width: var(--mg-width, 140%);
+  max-width: none;
+  margin-inline: calc((100% - var(--mg-width, 140%)) / 2);
+}
+
+/* ---- Flatten wrappers so each img/video is a direct layout item --------- */
+.markdown-preview-view .callout[data-callout^="gallery"] > .callout-content :is(p, div, span) {
+  display: contents;
+}
+.markdown-preview-view .callout[data-callout^="gallery"] .callout-content br {
+  display: none;
+}
+.markdown-preview-view .callout[data-callout^="gallery"] img,
+.markdown-preview-view .callout[data-callout^="gallery"] video {
+  cursor: zoom-in; /* hint the image-viewer lightbox */
+}
+
+/* ========================================================================= */
+/* [!gallery] — justified rows (sizes set inline by the plugin's JS)         */
+/* ========================================================================= */
+.markdown-preview-view .callout[data-callout="gallery"] > .callout-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mg-gap, 7px);
+  align-content: flex-start;
+}
+.markdown-preview-view .callout[data-callout="gallery"] img,
+.markdown-preview-view .callout[data-callout="gallery"] video {
+  display: block;
+  flex: 0 0 auto;      /* never stretch — the JS sizes each item exactly */
+  margin: 0;
+  object-fit: cover;   /* moot: width/height already match aspect ratio */
+  border-radius: var(--mg-radius, 6px);
+}
+
+/* ========================================================================= */
+/* [!gallery-masonry] — Pinterest-style columns (pure CSS)                   */
+/* ========================================================================= */
+.markdown-preview-view .callout[data-callout="gallery-masonry"] > .callout-content {
+  column-count: var(--mg-columns, 3);
+  column-gap: var(--mg-gap, 7px);
+}
+.markdown-preview-view .callout[data-callout="gallery-masonry"] img,
+.markdown-preview-view .callout[data-callout="gallery-masonry"] video {
+  display: block;
+  width: 100%;
+  height: auto;
+  break-inside: avoid;
+  margin: 0 0 var(--mg-gap, 7px);
+  border-radius: var(--mg-radius, 6px);
+}
