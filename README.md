@@ -6,6 +6,8 @@ An Obsidian plugin that turns callouts into image galleries in reading view — 
 
 ![gallery](https://img.shields.io/badge/Obsidian-plugin-7c3aed) ![view](https://img.shields.io/badge/mode-reading%20view-blue)
 
+![A justified gallery rendered in Obsidian's reading view](images/screenshot.png)
+
 ## Features
 
 - **`[!gallery]` — justified rows.** Widths are computed in JavaScript proportionally to each image's aspect ratio, so every row fills the width edge-to-edge while nothing is stretched or cropped (like Google Photos / Flickr).

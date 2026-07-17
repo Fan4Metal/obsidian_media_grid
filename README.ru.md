@@ -6,6 +6,8 @@
 
 ![gallery](https://img.shields.io/badge/Obsidian-plugin-7c3aed) ![view](https://img.shields.io/badge/режим-чтение-blue)
 
+![Justified-галерея в режиме чтения Obsidian](images/screenshot.png)
+
 ## Возможности
 
 - **`[!gallery]` — justified-ряды.** Ширины вычисляются на JavaScript пропорционально соотношению сторон каждой картинки, поэтому каждый ряд заполняет ширину от края до края, при этом ничто не растягивается и не обрезается (как в Google Photos / Flickr).
