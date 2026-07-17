@@ -1,7 +1,11 @@
-# Deploys the Media Gallery plugin into the dev vault.
-# Usage:  ./deploy.ps1                 deploy once to the bundled dev_vault
+# Deploys the Media Gallery plugin into a dev vault.
+# Usage:  ./deploy.ps1                 deploy once to ./dev_vault
 #         ./deploy.ps1 -Watch          deploy, then re-deploy on every change
 #         ./deploy.ps1 -Vault "C:\Path\To\OtherVault"
+#
+# ./dev_vault is a local, git-ignored test vault — it is NOT part of the repo.
+# Create it yourself (any Obsidian vault works) or pass -Vault to point
+# elsewhere. The script throws if the target has no .obsidian folder.
 #
 # Note: galleries are now handled by the plugin under ./plugin. The old CSS
 # snippets (media-*.css) are superseded — disable them in Obsidian

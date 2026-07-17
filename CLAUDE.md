@@ -25,7 +25,7 @@ The plugin ships as hand-written source — there is no bundler, transpiler, `pa
 There is no automated test suite; you verify by hand in Obsidian.
 
 ```powershell
-./deploy.ps1                          # copy plugin/* into the bundled dev_vault and enable it
+./deploy.ps1                          # copy plugin/* into the local dev_vault and enable it
 ./deploy.ps1 -Watch                   # re-deploy on every file change
 ./deploy.ps1 -Vault "C:\Path\To\Vault"  # deploy to a different vault
 ```
