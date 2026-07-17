@@ -2,12 +2,7 @@
 .DS_Store
 Thumbs.db
 
-# Obsidian workspace & cache (per-machine state)
-dev_vault/.obsidian/workspace*.json
-
-# Plugin runtime data — may contain secrets (e.g. API keys)
-dev_vault/.obsidian/plugins/*/data.json
-
-# Deployed copies — sources live in the repo (./plugin, ./*.css)
-dev_vault/.obsidian/plugins/media-gallery/
-dev_vault/.obsidian/snippets/
+# Local test vault — not part of the repo; sources live in ./plugin.
+# Holds per-machine Obsidian state, deployed plugin copies, and possibly
+# secrets (e.g. plugin data.json API keys), so the whole folder is ignored.
+dev_vault/
