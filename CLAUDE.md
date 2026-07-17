@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Commits
+
+In this project, append the `Co-Authored-By: Claude ...` trailer to commit messages
+(overrides the global default of omitting it).
+
 ## What this is
 
 An Obsidian plugin ("Media Gallery") that renders `> [!gallery]` and `> [!gallery-masonry]`
