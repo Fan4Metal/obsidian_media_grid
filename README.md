@@ -115,7 +115,6 @@ After deploying, reload Obsidian (`Ctrl+P → Reload app without saving`) and en
 | `plugin/main.js` | Post-processor + justified layout algorithm |
 | `plugin/styles.css` | Callout chrome, width breakout, masonry |
 | `deploy.ps1` | Copies the plugin into a vault; `-Watch` mode |
-| `dev_vault/` | Test vault with sample images and notes |
 
 ## License
 
