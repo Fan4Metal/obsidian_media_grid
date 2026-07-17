@@ -232,23 +232,39 @@ class MediaGalleryPlugin extends obsidian.Plugin {
     content.classList.add('mg-justified');
 
     const imgs = Array.from(content.querySelectorAll('img, video'));
-    const relayout = () => this.layout(content);
+
+    // Batch the flood of per-image load events into one layout per frame.
+    // A large gallery fires many load/loadedmetadata events in quick
+    // succession, and running the full pack on each is O(n²). The initial
+    // layout and resize layout stay synchronous so the gallery sizes
+    // correctly on first paint even when images come from cache.
+    let scheduled = false;
+    const relayoutBatched = () => {
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(() => {
+        scheduled = false;
+        this.layout(content);
+      });
+    };
 
     imgs.forEach((img) => {
       if (img.tagName === 'IMG') {
         if (img.complete && img.naturalWidth) return;
-        img.addEventListener('load', relayout);
-        img.addEventListener('error', relayout);
+        img.addEventListener('load', relayoutBatched);
+        img.addEventListener('error', relayoutBatched);
       } else {
-        img.addEventListener('loadedmetadata', relayout);
+        img.addEventListener('loadedmetadata', relayoutBatched);
       }
     });
 
-    const ro = new ResizeObserver(() => relayout());
+    // ResizeObserver is already throttled to at most one notification per
+    // frame, so layout runs synchronously here without the O(n²) risk.
+    const ro = new ResizeObserver(() => this.layout(content));
     ro.observe(content);
     this.observers.add(ro);
 
-    relayout();
+    this.layout(content);
   }
 
   /* The justified algorithm: greedy row fill, then scale each row to width. */
